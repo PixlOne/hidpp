@@ -19,7 +19,7 @@
 #include <hidpp/SimpleDispatcher.h>
 #include <hidpp20/Device.h>
 #include <hidpp20/Error.h>
-#include <hidpp20/IReprogControlsV4.h>
+#include <hidpp20/IReprogControls.h>
 #include <cstdio>
 #include <memory>
 
@@ -119,11 +119,11 @@ int main (int argc, char *argv[])
 			for (unsigned int i = 0; i < count; ++i) {
 				auto info = irc.getControlInfo (i);
 				printf ("0x%04hx\t0x%04hx", info.control_id, info.task_id);
-				if (info.flags & IReprogControlsV4::MouseButton)
+				if (info.flags & IReprogControls::MouseButton)
 					printf ("\tmouse");
-				else if (info.flags & IReprogControlsV4::FKey)
+				else if (info.flags & IReprogControls::FKey)
 					printf ("\tF%d", info.pos);
-				else if (info.flags & IReprogControlsV4::HotKey)
+				else if (info.flags & IReprogControls::HotKey)
 					printf ("\thotkey");
 				else
 					printf ("\t-");
@@ -135,11 +135,11 @@ int main (int argc, char *argv[])
 
 				printf ("\t");
 				printFlags (info.flags | ((uint16_t) info.additional_flags << 8), {
-					std::make_tuple (IReprogControlsV4::ReprogHint, "reprog"),
-					std::make_tuple (IReprogControlsV4::TemporaryDivertable, "divert"),
-					std::make_tuple (IReprogControlsV4::PersistentDivertable, "persist"),
-					std::make_tuple (IReprogControlsV4::Virtual, "virtual"),
-					std::make_tuple (IReprogControlsV4::RawXY<<8, "rawxy"),
+					std::make_tuple (IReprogControls::ReprogHint, "reprog"),
+					std::make_tuple (IReprogControls::TemporaryDivertable, "divert"),
+					std::make_tuple (IReprogControls::PersistentDivertable, "persist"),
+					std::make_tuple (IReprogControls::Virtual, "virtual"),
+					std::make_tuple (IReprogControls::RawXY<<8, "rawxy"),
 				});
 				printf ("\t");
 				if (info.group != 0)
@@ -179,9 +179,9 @@ int main (int argc, char *argv[])
 			uint16_t remap = irc.getControlReporting (cid, flags);
 			printf ("0x%04hx (flags: ", remap);
 			printFlags (flags, {
-				std::make_tuple (IReprogControlsV4::TemporaryDiverted, "divert"),
-				std::make_tuple (IReprogControlsV4::PersistentDiverted, "persist"),
-				std::make_tuple (IReprogControlsV4::RawXYDiverted, "rawxy"),
+				std::make_tuple (IReprogControls::TemporaryDiverted, "divert"),
+				std::make_tuple (IReprogControls::PersistentDiverted, "persist"),
+				std::make_tuple (IReprogControls::RawXYDiverted, "rawxy"),
 			});
 			printf (")\n");
 
@@ -210,17 +210,17 @@ int main (int argc, char *argv[])
 			}
 			uint8_t flags = 0;
 			if (divert != NoChange)
-				flags |= IReprogControlsV4::ChangeTemporaryDivert;
+				flags |= IReprogControls::ChangeTemporaryDivert;
 			if (divert == On)
-				flags |= IReprogControlsV4::TemporaryDiverted;
+				flags |= IReprogControls::TemporaryDiverted;
 			if (persist != NoChange)
-				flags |= IReprogControlsV4::ChangePersistentDivert;
+				flags |= IReprogControls::ChangePersistentDivert;
 			if (persist == On)
-				flags |= IReprogControlsV4::PersistentDiverted;
+				flags |= IReprogControls::PersistentDiverted;
 			if (raw_xy != NoChange)
-				flags |= IReprogControlsV4::ChangeRawXYDivert;
+				flags |= IReprogControls::ChangeRawXYDivert;
 			if (raw_xy == On)
-				flags |= IReprogControlsV4::RawXYDiverted;
+				flags |= IReprogControls::RawXYDiverted;
 			irc.setControlReporting (cid, flags, remap);
 		}
 		else {
