@@ -17,6 +17,7 @@
  */
 
 #include "IReprogControls.h"
+#include "UnsupportedFeature.h"
 
 #include <misc/Endian.h>
 #include <cassert>
@@ -26,6 +27,22 @@ using namespace HIDPP20;
 IReprogControls::IReprogControls (Device *dev, uint16_t i): ID (i),
         FeatureInterface (dev, i, "ReprogControls")
 {
+}
+
+IReprogControls IReprogControls::auto_version(Device *dev)
+{
+    // Scan versions, starting from highest to lowest
+    std::vector<uint8_t> results = dev->callFunction(0, 0, {0x1b, 0x04}); // V4
+    if(results[0] != 0) return IReprogControlsV4(dev);
+    results = dev->callFunction(0, 0, {0x1b, 0x03}); // V3
+    if(results[0] != 0) return IReprogControlsV3(dev);
+    results = dev->callFunction(0, 0, {0x1b, 0x02}); // V2.2
+    if(results[0] != 0) return IReprogControlsV2_2(dev);
+    results = dev->callFunction(0, 0, {0x1b, 0x01}); // V2
+    if(results[0] != 0) return IReprogControlsV2(dev);
+    results = dev->callFunction(0, 0, {0x1b, 0x00}); // V1
+    if(results[0] != 0) return {dev};
+    throw new UnsupportedFeature(0x1b00, "Reprog controls");
 }
 
 unsigned int IReprogControls::getControlCount ()

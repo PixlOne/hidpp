@@ -22,6 +22,7 @@
 #include <hidpp20/FeatureInterface.h>
 
 #include <vector>
+#include <map>
 
 namespace HIDPP20
 {
@@ -118,6 +119,8 @@ namespace HIDPP20
         virtual void setControlReporting (uint16_t control_id, uint8_t flags, uint16_t remap);
 
         static std::vector<uint16_t> divertedButtonEvent (const HIDPP::Report &event);
+
+        static IReprogControls auto_version(Device *dev);
     };
 
     /**
@@ -126,7 +129,8 @@ namespace HIDPP20
     class IReprogControlsV2 : public IReprogControls
     {
     public:
-        IReprogControlsV2 (Device *dev) : IReprogControls(dev, 0x1b01) { }
+        static constexpr uint16_t ID = 0x1b01;
+        IReprogControlsV2 (Device *dev) : IReprogControls(dev, ID) { }
     };
 
     /**
@@ -135,7 +139,8 @@ namespace HIDPP20
     class IReprogControlsV2_2 : public IReprogControls
     {
     public:
-        IReprogControlsV2_2 (Device *dev) : IReprogControls(dev, 0x1b02) { }
+        static constexpr uint16_t ID = 0x1b02;
+        IReprogControlsV2_2 (Device *dev) : IReprogControls(dev, ID) { }
     };
 
     /**
@@ -144,7 +149,8 @@ namespace HIDPP20
     class IReprogControlsV3 : public IReprogControls
     {
     public:
-        IReprogControlsV3 (Device *dev) : IReprogControls(dev, 0x1b03) { }
+        static constexpr uint16_t ID = 0x1b03;
+        IReprogControlsV3 (Device *dev) : IReprogControls(dev, ID) { }
     };
 
     /**
@@ -153,7 +159,8 @@ namespace HIDPP20
     class IReprogControlsV4: public IReprogControls
     {
     public:
-        IReprogControlsV4 (Device *dev) : IReprogControls(dev, 0x1b04) { }
+        static constexpr uint16_t ID = 0x1b04;
+        IReprogControlsV4 (Device *dev) : IReprogControls(dev, ID) { }
 
         struct Move
         {
