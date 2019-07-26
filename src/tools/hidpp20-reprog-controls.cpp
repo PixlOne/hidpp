@@ -112,7 +112,7 @@ int main (int argc, char *argv[])
 	}
 	Device dev (dispatcher.get (), device_index);
 	try {
-		IReprogControlsV4 irc (&dev);
+		IReprogControls irc = IReprogControls::auto_version(&dev);
 		if (op == "info") {
 			unsigned int count = irc.getControlCount ();
 			printf ("Control\tTask\tInfo\tFn\tCapabilities\tGroup\tRemap to groups\n");
@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
 				else
 					printf ("\t-");
 
-				if (info.flags & IReprogControlsV4::FnToggle)
+				if (info.flags & IReprogControls::FnToggle)
 					printf ("\ttoggle");
 				else
 					printf ("\t-");
