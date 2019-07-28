@@ -63,7 +63,9 @@ public:
 	 */
 	enum Type: uint8_t {
 		Short = 0x10,	///< Short reports use 3 byte parameters.
-		Long = 0x11,	///< Long report use 16 byte parameters.
+		Long = 0x11,	///< Long reports use 16 byte parameters.
+		ShortDJ = 0x20, ///< Short DJ reports use 12 byte parameters.
+		LongDJ = 0x21,  ///< Long DJ reports use 29 byte parameters
 	};
 
 	/**
@@ -89,7 +91,7 @@ public:
 	/**
 	 * Maximum length of a HID++ report.
 	 */
-	static constexpr std::size_t MaxDataLength = 19;
+	static constexpr std::size_t MaxDataLength = 32;
 
 	/**
 	 * Build the report by copying the raw data.
@@ -285,6 +287,7 @@ public:
 
 private:
 	static constexpr std::size_t HeaderLength = 4;
+	static constexpr std::size_t DJHeaderLength = 3;
 	std::vector<uint8_t> _data;
 };
 

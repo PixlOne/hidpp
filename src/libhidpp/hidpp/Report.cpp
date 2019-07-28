@@ -126,6 +126,7 @@ static constexpr unsigned int DeviceIndex = 1;
 static constexpr unsigned int SubID = 2;
 static constexpr unsigned int Address = 3;
 static constexpr unsigned int Parameters = 4;
+static constexpr unsigned int DJParameters = 3;
 }
 
 Report::Report (uint8_t type, const uint8_t *data, std::size_t length)
@@ -137,6 +138,12 @@ Report::Report (uint8_t type, const uint8_t *data, std::size_t length)
 	case Long:
 		_data.resize (HeaderLength+LongParamLength);
 		break;
+	case ShortDJ:
+	    _data.resize (DJHeaderLength+ShortDJParamLength);
+	    break;
+    case LongDJ:
+        _data.resize (DJHeaderLength+ShortDJParamLength);
+        break;
 	default:
 		throw InvalidReportID ();
 	}
@@ -157,6 +164,12 @@ Report::Report (std::vector<uint8_t> &&data)
 	case Long:
 		expected_len = HeaderLength+LongParamLength;
 		break;
+	case ShortDJ:
+	    expected_len = DJHeaderLength+ShortDJParamLength;
+	    break;
+	case LongDJ:
+	    expected_len = DJHeaderLength+LongDJParamLength;
+	    break;
 	default:
 		throw InvalidReportID ();
 	}
@@ -177,6 +190,12 @@ Report::Report (Type type,
 	case Long:
 		_data.resize (HeaderLength+LongParamLength, 0);
 		break;
+    case ShortDJ:
+        _data.resize (DJHeaderLength+ShortDJParamLength, 0);
+        break;
+    case LongDJ:
+        _data.resize (DJHeaderLength+LongDJParamLength, 0);
+        break;
 	}
 	_data[Offset::Type] = type;
 	_data[Offset::DeviceIndex] = device_index;
@@ -199,6 +218,14 @@ Report::Report (HIDPP::DeviceIndex device_index,
 		_data.resize (HeaderLength+LongParamLength);
 		_data[Offset::Type] = Long;
 		break;
+	case ShortDJParamLength:
+	    _data.resize (DJHeaderLength+ShortDJParamLength);
+	    _data[Offset::Type] = ShortDJ;
+	    break;
+    case LongDJParamLength:
+        _data.resize (DJHeaderLength+LongDJParamLength);
+        _data[Offset::Type] = LongDJ;
+        break;
 	default:
 		throw InvalidReportLength ();
 	}
@@ -221,6 +248,12 @@ Report::Report (Type type,
 	case Long:
 		_data.resize (HeaderLength+LongParamLength, 0);
 		break;
+	case ShortDJ:
+	    _data.resize (DJHeaderLength+ShortDJParamLength, 0);
+	    break;
+	case LongDJ:
+	    _data.resize (DJHeaderLength+LongDJParamLength, 0);
+	    break;
 	}
 	_data[Offset::Type] = type;
 	_data[Offset::DeviceIndex] = device_index;
@@ -244,13 +277,30 @@ Report::Report (DeviceIndex device_index,
 		_data.resize (HeaderLength+LongParamLength);
 		_data[Offset::Type] = Long;
 		break;
+	case ShortDJParamLength:
+        _data.resize (DJHeaderLength+ShortDJParamLength);
+        _data[Offset::Type] = ShortDJ;
+        break;
+    case LongDJParamLength:
+        _data.resize (DJHeaderLength+LongDJParamLength);
+        _data[Offset::Type] = LongDJ;
+        break;
 	default:
 		throw InvalidReportLength ();
 	}
 	_data[Offset::DeviceIndex] = device_index;
 	_data[Offset::SubID] = feature_index;
 	_data[Offset::Address] = (function & 0x0f) << 4 | (sw_id & 0x0f);
-	std::copy (param_begin, param_end, &_data[Offset::Parameters]);
+	switch (_data[Offset::Type]) {
+    case Short:
+    case Long:
+        std::copy(param_begin, param_end, &_data[Offset::Parameters]);
+        break;
+    case ShortDJ:
+    case LongDJ:
+        std::copy(param_begin, param_end, &_data[Offset::DJParameters]);
+        break;
+    }
 }
 
 Report::Type Report::type () const
@@ -325,6 +375,10 @@ std::size_t Report::parameterLength (Type type)
 		return ShortParamLength;
 	case Long:
 		return LongParamLength;
+	case ShortDJ:
+	    return ShortDJParamLength;
+	case LongDJ:
+	    return LongDJParamLength;
 	default:
 		throw std::logic_error ("Invalid type");
 	}
@@ -332,12 +386,26 @@ std::size_t Report::parameterLength (Type type)
 
 std::vector<uint8_t>::iterator Report::parameterBegin ()
 {
-	return _data.begin () + Offset::Parameters;
+    switch (_data[Offset::Type]) {
+        case Short:
+        case Long:
+            return _data.begin () + Offset::Parameters;
+        case ShortDJ:
+        case LongDJ:
+            return _data.begin () + Offset::DJParameters;
+    }
 }
 
 std::vector<uint8_t>::const_iterator Report::parameterBegin () const
 {
-	return _data.begin () + Offset::Parameters;
+    switch (_data[Offset::Type]) {
+        case Short:
+        case Long:
+            return _data.begin () + Offset::Parameters;
+        case ShortDJ:
+        case LongDJ:
+            return _data.begin () + Offset::DJParameters;
+    }
 }
 
 std::vector<uint8_t>::iterator Report::parameterEnd ()

@@ -23,20 +23,20 @@ namespace HIDPP20
             RatchetSwitch = 1,
         };
 
-        enum Capability
+        enum Capability : uint8_t
         {
             Invertable = 1<<3,
             HasRatchet = 1<<2
         };
 
-        enum Mode
+        enum Mode : uint8_t
         {
             Inverted = 1<<2,
             HiRes = 1<<1,
             Target = 1
         };
 
-        enum RatchetState
+        enum RatchetState : uint8_t
         {
             FreeWheel = 0,
             Ratchet = 1
@@ -63,9 +63,9 @@ namespace HIDPP20
 
         bool getRatchetState();
 
-        WheelStatus wheelMovementEvent (const HIDPP::Report &event);
+        static WheelStatus wheelMovementEvent (const HIDPP::Report &event);
 
-        RatchetState ratchetSwitchEvent (const HIDPP::Report &event);
+        static RatchetState ratchetSwitchEvent (const HIDPP::Report &event);
 
         IHiresScroll(Device* dev);
     };

@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <string>
+#include "Device.h"
 
 namespace HIDPP10
 {
@@ -61,6 +62,47 @@ public:
 		BottomEdge = 0xC,
 	};
 
+	enum Event : uint8_t
+    {
+	    DeviceUnpaired = 0x40,
+	    DevicePaired = 0x41,
+	    ConnectionStatus = 0x42,
+	    Error = 0x7F
+    };
+
+	static const std::vector<uint8_t> Events;
+
+	enum ConnectionStatus : uint8_t
+    {
+	    ConnectionEstablished = 0,
+	    LinkLoss = 1
+    };
+
+	enum class RFReport : uint8_t
+    {
+        StandardKeyboard = 1,
+        Mouse = 2,
+        Multimedia = 3,
+        PowerKeys = 4,
+        MediaCenter = 8,
+        KeyboardLEDs = 14,
+        ShortHIDPP = 16,
+        LongHIDPP = 17
+    };
+
+	enum ErrorType : uint8_t
+    {
+	    KeepAliveTimeout = 1
+    };
+
+	struct DevicePairedEvent
+    {
+        bool moreEvents;
+        bool empty;
+        uint16_t pid;
+        std::vector<uint8_t> reportBitfield;
+    };
+
 	IReceiver (Device *dev);
 
 	void getDeviceInformation (unsigned int device,
@@ -73,6 +115,12 @@ public:
 					   uint32_t *report_types,
 					   PowerSwitchLocation *ps_loc);
 	std::string getDeviceName (unsigned int device);
+
+    static DevicePairedEvent devicePairedEvent (const HIDPP::Report &event);
+
+    static uint8_t connectionStatusEvent (const HIDPP::Report &event);
+
+    static uint8_t errorEvent (const HIDPP::Report &event);
 
 private:
 	Device *_dev;

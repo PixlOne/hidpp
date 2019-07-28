@@ -15,17 +15,11 @@ ISmartShift::SmartshiftStatus ISmartShift::getStatus()
 
 void ISmartShift::setStatus(SmartshiftStatus status)
 {
-    auto current_status = getStatus();
     std::vector<uint8_t> params (3);
 
-    if(status.Active == nullptr) params.push_back(*current_status.Active);
-    else params.push_back(*status.Active);
-
-    if(status.AutoDisengage == nullptr) params.push_back(*current_status.AutoDisengage);
-    else params.push_back(*status.AutoDisengage);
-
-    if(status.AutoDisengage == nullptr) params.push_back(*current_status.DefaultAutoDisengage);
-    else params.push_back(*status.DefaultAutoDisengage);
+    params[0] = status.Active != nullptr ? *status.Active + 1 : 0;
+    params[1] = status.AutoDisengage != nullptr ? *status.AutoDisengage : 0;
+    params[2] = status.DefaultAutoDisengage != nullptr ? *status.DefaultAutoDisengage : 0;
 
     call(SetStatus, params);
 }

@@ -39,6 +39,16 @@ namespace HIDPP
 	constexpr std::size_t LongParamLength = 16;
 
 	/**
+	 * Short DJ report parameter length.
+	 */
+	constexpr std::size_t ShortDJParamLength = 12;
+
+    /**
+     * Long DJ report parameter length.
+     */
+    constexpr std::size_t LongDJParamLength = 32;
+
+	/**
 	 * HID++ device index.
 	 *
 	 * Receiver and wireless devices share the same

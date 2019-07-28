@@ -23,8 +23,17 @@
 
 #include <misc/Endian.h>
 #include <stdexcept>
+#include <cassert>
 
 using namespace HIDPP10;
+
+const std::vector<uint8_t> IReceiver::Events
+({
+         IReceiver::DeviceUnpaired,
+         IReceiver::DevicePaired,
+         IReceiver::ConnectionStatus,
+         IReceiver::Error
+});
 
 IReceiver::IReceiver (Device *dev):
 	_dev (dev)
@@ -103,4 +112,35 @@ std::string IReceiver::getDeviceName (unsigned int device)
 
 	std::size_t length = results[1];
 	return std::string (reinterpret_cast<char *> (&results[2]), std::min (length, std::size_t {14}));
+}
+
+IReceiver::DevicePairedEvent IReceiver::devicePairedEvent (const HIDPP::Report &event)
+{
+    assert (event.featureIndex() == DevicePaired);
+    DevicePairedEvent dpe {};
+
+    auto params = event.parameterBegin();
+    dpe.moreEvents = params[0] & 1;
+    dpe.empty = params[0] & 2;
+    dpe.pid = params[1] << 8 | params[2];
+
+    uint32_t bitfield = params[3] << 24 | params[4] << 16 | params[5] << 8 | params[6];
+    for(int i = 0; i < 32; i++)
+        if(bitfield & (1 << i))
+            dpe.reportBitfield.push_back(i);
+
+    return dpe;
+}
+uint8_t IReceiver::connectionStatusEvent (const HIDPP::Report &event)
+{
+    assert (event.featureIndex() == ConnectionStatus);
+    auto params = event.parameterBegin();
+    return params[0];
+}
+
+uint8_t IReceiver::errorEvent (const HIDPP::Report &event)
+{
+    assert (event.featureIndex() == Error);
+    auto params = event.parameterBegin();
+    return params[0];
 }
