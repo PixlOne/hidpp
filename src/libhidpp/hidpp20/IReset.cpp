@@ -16,37 +16,26 @@
  *
  */
 
-#ifndef HIDPP_ISMARTSHIFT_H
-#define HIDPP_ISMARTSHIFT_H
+#include "IReset.h"
 
-#include <hidpp20/FeatureInterface.h>
+using namespace HIDPP20;
 
-namespace HIDPP20
+uint16_t IReset::getProfile()
 {
-    class ISmartShift : public FeatureInterface
-    {
-    public:
-        static constexpr uint16_t ID = 0x2110;
-
-        enum Function
-        {
-            GetStatus = 0,
-            SetStatus = 1
-        };
-
-        struct SmartshiftStatus
-        {
-            bool* Active = nullptr;
-            uint8_t* AutoDisengage = nullptr;
-            uint8_t* DefaultAutoDisengage = nullptr;
-        };
-
-        SmartshiftStatus getStatus();
-
-        void setStatus(SmartshiftStatus status);
-
-        ISmartShift(Device *dev);
-    };
+    auto results = call(GetProfile);
+    return (results[0] << 8) | results[1];
 }
 
-#endif
+void IReset::reset (uint16_t profile)
+{
+    std::vector<uint8_t> params;
+    params.push_back((uint8_t)(profile >> 8));
+    params.push_back((uint8_t)(profile & 0xFF));
+
+    call(Reset, params);
+}
+
+IReset::IReset (Device *dev):
+        FeatureInterface (dev, ID, "Reset")
+{
+}
