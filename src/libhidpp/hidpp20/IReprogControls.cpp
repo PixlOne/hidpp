@@ -46,7 +46,7 @@ IReprogControls IReprogControls::auto_version(Device *dev)
 
     return {dev}; // Base version, throw UnsupportedFeature if non-existent
 }
-2
+
 unsigned int IReprogControls::getControlCount ()
 {
     std::vector<uint8_t> results;
