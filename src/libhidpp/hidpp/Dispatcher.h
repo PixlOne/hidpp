@@ -86,7 +86,7 @@ public:
 	/**
 	 * Sends the report without expecting any answer from the device.
 	 */
-	virtual void sendCommandWithoutResponse (const Report &report) = 0;
+	virtual void sendCommandWithoutResponse (Report &report) = 0;
 
 	/**
 	 * Sends the report expecting a matching (device index, sub ID and address)
@@ -119,8 +119,11 @@ public:
 	 */
 	virtual void unregisterEventHandler (listener_iterator it);
 
+	virtual bool forceLongReports () const = 0;
+
 protected:
 	void processEvent (const Report &);
+	bool force_long_reports = false;
 
 private:
 	listener_container _listeners;

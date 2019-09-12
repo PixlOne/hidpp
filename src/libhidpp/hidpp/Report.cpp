@@ -24,9 +24,7 @@
 
 using namespace HIDPP;
 
-static const std::array<uint8_t, 27> ShortReportDesc = {
-	0x06, 0x00, 0xFF,	// Usage Page (FF00 - Vendor)
-	0x09, 0x01,		// Usage (0001 - Vendor)
+static const std::array<uint8_t, 22> ShortReportDesc = {
 	0xA1, 0x01,		// Collection (Application)
 	0x85, 0x10,		//   Report ID (16)
 	0x75, 0x08,		//   Report Size (8)
@@ -40,9 +38,7 @@ static const std::array<uint8_t, 27> ShortReportDesc = {
 	0xC0			// End Collection
 };
 
-static const std::array<uint8_t, 27> LongReportDesc = {
-	0x06, 0x00, 0xFF,	// Usage Page (FF00 - Vendor)
-	0x09, 0x02,		// Usage (0002 - Vendor)
+static const std::array<uint8_t, 22> LongReportDesc = {
 	0xA1, 0x01,		// Collection (Application)
 	0x85, 0x11,		//   Report ID (17)
 	0x75, 0x08,		//   Report Size (8)
@@ -57,9 +53,7 @@ static const std::array<uint8_t, 27> LongReportDesc = {
 };
 
 /* Alternative versions from the G602 */
-static const std::array<uint8_t, 27> ShortReportDesc2 = {
-	0x06, 0x00, 0xFF,	// Usage Page (FF00 - Vendor)
-	0x09, 0x01,		// Usage (0001 - Vendor)
+static const std::array<uint8_t, 22> ShortReportDesc2 = {
 	0xA1, 0x01,		// Collection (Application)
 	0x85, 0x10,		//   Report ID (16)
 	0x95, 0x06,		//   Report Count (6)
@@ -73,9 +67,7 @@ static const std::array<uint8_t, 27> ShortReportDesc2 = {
 	0xC0			// End Collection
 };
 
-static const std::array<uint8_t, 27> LongReportDesc2 = {
-	0x06, 0x00, 0xFF,	// Usage Page (FF00 - Vendor)
-	0x09, 0x02,		// Usage (0002 - Vendor)
+static const std::array<uint8_t, 22> LongReportDesc2 = {
 	0xA1, 0x01,		// Collection (Application)
 	0x85, 0x11,		//   Report ID (17)
 	0x95, 0x13,		//   Report Count (19)
@@ -99,6 +91,16 @@ bool HIDPP::checkReportDescriptor (const std::vector<uint8_t> &rdesc)
 {
 	return (contains (rdesc, ShortReportDesc) || contains (rdesc, ShortReportDesc2)) &&
 		(contains (rdesc, LongReportDesc) || contains (rdesc, LongReportDesc2));
+}
+
+bool HIDPP::checkShortDescriptor (const std::vector<uint8_t> &rdesc)
+{
+    return (contains (rdesc, ShortReportDesc) || contains (rdesc, ShortReportDesc2));
+}
+
+bool HIDPP::checkLongDescriptor (const std::vector<uint8_t> &rdesc)
+{
+    return (contains (rdesc, LongReportDesc) || contains (rdesc, LongReportDesc2));
 }
 
 Report::InvalidReportID::InvalidReportID ()
@@ -458,5 +460,10 @@ bool Report::checkErrorMessage20 (uint8_t *feature_index,
 	if (error_code)
 		*error_code = _data[5];
 	return true;
+}
+
+void Report::setType(Report::Type type)
+{
+    _data[Offset::Type] = type;
 }
 

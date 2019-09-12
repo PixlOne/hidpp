@@ -219,7 +219,7 @@ int main (int argc, char *argv[])
 		fprintf (stderr, "Failed to open %s: %s\n", path, e.what ());
 		return EXIT_FAILURE;
 	}
-	HIDPP::Device gdev (dispatcher.get (), device_index);
+	HIDPP::Device gdev (dispatcher.get (), device_index );
 
 	/*
 	 * Check protocol version

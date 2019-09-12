@@ -28,6 +28,8 @@ namespace HIDPP
 {
 
 bool checkReportDescriptor (const std::vector<uint8_t> &report_desc);
+bool checkShortDescriptor (const std::vector<uint8_t> &report_desc);
+bool checkLongDescriptor (const std::vector<uint8_t> &report_desc);
 
 /**
  * Contains a HID++ report.
@@ -284,6 +286,8 @@ public:
 	 * Get the raw HID report (without the ID).
 	 */
 	const std::vector<uint8_t> &rawReport () const;
+
+	void setType(Report::Type type);
 
 private:
 	static constexpr std::size_t HeaderLength = 4;

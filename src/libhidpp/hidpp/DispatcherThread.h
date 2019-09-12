@@ -46,13 +46,15 @@ public:
 	virtual uint16_t vendorID () const;
 	virtual uint16_t productID () const;
 	virtual std::string name () const;
-	virtual void sendCommandWithoutResponse (const Report &report);
+	virtual void sendCommandWithoutResponse (Report &report);
 	virtual std::unique_ptr<Dispatcher::AsyncReport> sendCommand (Report &&report);
 	virtual std::unique_ptr<Dispatcher::AsyncReport> getNotification (DeviceIndex index, uint8_t sub_id);
 
 
 	virtual listener_iterator registerEventHandler (DeviceIndex index, uint8_t sub_id, const event_handler &handler);
 	virtual void unregisterEventHandler (listener_iterator it);
+
+    virtual bool forceLongReports () const;
 
 	void run ();
 	void stop ();

@@ -31,11 +31,20 @@ SimpleDispatcher::SimpleDispatcher (const char *path):
 {
 	const HID::ReportDescriptor &rdesc = _dev.getReportDescriptor ();
 	if (!checkReportDescriptor (rdesc))
-		throw Dispatcher::NoHIDPPReportException ();
+    {
+	    if (!checkLongDescriptor (rdesc))
+		    throw Dispatcher::NoHIDPPReportException ();
+        force_long_reports = true;
+    }
 }
 
 SimpleDispatcher::~SimpleDispatcher ()
 {
+}
+
+bool SimpleDispatcher::forceLongReports() const
+{
+    return force_long_reports;
 }
 
 const HID::RawDevice &SimpleDispatcher::hidraw () const
@@ -58,13 +67,17 @@ std::string SimpleDispatcher::name () const
 	return _dev.name ();
 }
 
-void SimpleDispatcher::sendCommandWithoutResponse (const Report &report)
+void SimpleDispatcher::sendCommandWithoutResponse (Report &report)
 {
+    if (forceLongReports() && report.type() == Report::Short)
+        report.setType(Report::Long);
 	_dev.writeReport (report.rawReport ());
 }
 
 std::unique_ptr<Dispatcher::AsyncReport> SimpleDispatcher::sendCommand (Report &&report)
 {
+    if (forceLongReports() && report.type() == Report::Short)
+        report.setType(Report::Long);
 	_dev.writeReport (report.rawReport ());
 	return std::make_unique<CommandResponse> (this, std::move (report));
 }

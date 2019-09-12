@@ -52,9 +52,9 @@ std::vector<uint8_t> Device::callFunction (uint8_t feature_index,
 
 	std::size_t len = std::distance (param_begin, param_end);
 	HIDPP::Report::Type type;
-	if (len <= HIDPP::ShortParamLength)
+	if (len <= HIDPP::ShortParamLength && !forceLongReports())
 		type = HIDPP::Report::Short;
-	else if (len <= HIDPP::LongParamLength)
+	else if (len <= HIDPP::LongParamLength || forceLongReports())
 		type = HIDPP::Report::Long;
 	else {
 		throw std::logic_error ("Parameters too long");

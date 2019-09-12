@@ -93,12 +93,18 @@ public:
 	 */
 	std::tuple<unsigned int, unsigned int> protocolVersion ();
 
+	const inline bool forceLongReports()
+    {
+	    return force_long_reports;
+    }
+
 private:
 	Dispatcher *_dispatcher;
 	DeviceIndex _device_index;
 	uint16_t _product_id;
 	std::string _name;
 	std::tuple<unsigned int, unsigned int> _version;
+	bool force_long_reports = false;
 };
 
 }

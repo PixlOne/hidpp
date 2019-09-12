@@ -39,6 +39,8 @@ Option DeviceIndexOption (HIDPP::DeviceIndex &device_index)
 			case 6:
 				device_index = HIDPP::WirelessDevice6;
 				break;
+			case 255:
+			    device_index = HIDPP::DefaultDevice;
 			default:
 				fprintf (stderr, "Invalid device index: %s\n", optarg);
 				return false;

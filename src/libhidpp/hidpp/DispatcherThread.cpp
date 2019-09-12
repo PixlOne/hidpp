@@ -67,12 +67,20 @@ DispatcherThread::DispatcherThread (const char *path):
 	_stopped (false)
 {
 	const HID::ReportDescriptor &rdesc = _dev.getReportDescriptor ();
-	if (!checkReportDescriptor (rdesc))
-		throw Dispatcher::NoHIDPPReportException ();
+    if (!checkReportDescriptor (rdesc))
+        if (!checkLongDescriptor (rdesc))
+            throw Dispatcher::NoHIDPPReportException ();
+        else
+            force_long_reports = true;
 }
 
 DispatcherThread::~DispatcherThread ()
 {
+}
+
+bool DispatcherThread::forceLongReports () const
+{
+    return force_long_reports;
 }
 
 const HID::RawDevice &DispatcherThread::hidraw () const
@@ -95,13 +103,17 @@ std::string DispatcherThread::name () const
 	return _dev.name ();
 }
 
-void DispatcherThread::sendCommandWithoutResponse (const Report &report)
+void DispatcherThread::sendCommandWithoutResponse (Report &report)
 {
+    if (forceLongReports() && report.type() == Report::Short)
+        report.setType(Report::Long);
 	_dev.writeReport (report.rawReport ());
 }
 
 std::unique_ptr<Dispatcher::AsyncReport> DispatcherThread::sendCommand (Report &&report)
 {
+    if (forceLongReports() && report.type() == Report::Short)
+        report.setType(Report::Long);
 	std::unique_lock<std::mutex> lock (_command_mutex);
 	if (_stopped)
 		throw _exception;
