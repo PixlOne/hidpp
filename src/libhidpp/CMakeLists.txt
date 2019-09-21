@@ -56,6 +56,7 @@ set(LIBHIDPP_SOURCES
 	hidpp20/ISmartShift.cpp
 	hidpp20/IHiresScroll.cpp
 	hidpp20/IReset.cpp
+	hidpp20/IWirelessDeviceStatus.cpp
 	hidpp20/ProfileDirectoryFormat.cpp
 	hidpp20/ProfileFormat.cpp
 	hidpp20/MemoryMapping.cpp
