@@ -93,7 +93,7 @@ public:
 	 */
 	std::tuple<unsigned int, unsigned int> protocolVersion ();
 
-	const inline bool forceLongReports()
+	bool forceLongReports()
     {
 	    return force_long_reports;
     }

@@ -33,7 +33,6 @@ namespace HIDPP20
     class IReprogControls: public FeatureInterface
     {
     public:
-        const uint16_t ID;
 
         enum Function {
             GetControlCount = 0,
@@ -48,6 +47,8 @@ namespace HIDPP20
         };
 
         IReprogControls (Device *dev, uint16_t i=0x1b00);
+
+        const uint16_t ID;
 
         /**
          * \return the count of control on this device.
