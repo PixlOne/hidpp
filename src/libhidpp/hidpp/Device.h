@@ -22,6 +22,7 @@
 #include <hidpp/defs.h>
 #include <hidpp/Report.h>
 #include <tuple>
+#include <string>
 
 namespace HIDPP
 {
