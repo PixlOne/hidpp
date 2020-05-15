@@ -23,6 +23,7 @@
 #include <hidpp10/Sensor.h>
 
 #include <misc/Endian.h>
+#include <stdexcept>
 
 using namespace HIDPP10;
 
